@@ -1,0 +1,77 @@
+version: '2.2'
+
+services:
+  # Make sure your host(!) machine contains
+  # `.password` file with your wallet password and `.api` file with your API email and password on separate lines
+  #
+  # To open CLI run `docker-compose exec chainlink bash` when the main container is already running(!)
+  chainlink:
+    # image: smartcontract/chainlink
+    build: .
+    restart: always
+    command: "local n -p /chainlink/.password -a /chainlink/.api"
+#    environment:
+#      VIRTUAL_HOST: example.com
+#      LETSENCRYPT_HOST: example.com
+    ports:
+      - PRIVATE_IP:6688:6688
+    volumes:
+      - /data/chainlink:/chainlink
+    env_file: ./.env
+    #    # in order for this to work we need to install curl into this container
+    healthcheck:
+      test: curl -sS http://PRIVATE_IP:6688 || exit 1
+  # RUN ONLY when you have chainlink primary working
+  chainlink_secondary:
+    # image: smartcontract/chainlink
+    build: .
+    restart: always
+    command: "local n -p /chainlink/.password -a /chainlink/.api"
+#    environment:
+#      VIRTUAL_HOST: example.com
+#      LETSENCRYPT_HOST: example.com
+    ports:
+      - PRIVATE_IP_SECONDARY:6687:6688
+    volumes:
+      - /data/chainlink:/chainlink
+    env_file: ./.env
+#    # in order for this to work we need to install curl into this container
+    healthcheck:
+      test: curl -sS http://PRIVATE_IP_SECONDARY:6687 || exit 1
+  chainlink_gas_price:
+    image: peppersec/chainlink_gas_price
+    env_file: ./.env
+    restart: always
+  chainlink_ropsten:
+    # image: smartcontract/chainlink
+    build: .
+    restart: always
+    command: "local n -p /chainlink/.password -a /chainlink/.api"
+#    environment:
+#      VIRTUAL_HOST: example.com
+#      LETSENCRYPT_HOST: example.com
+    ports:
+      - PRIVATE_IP_ROPSTEN:3388:6688
+    volumes:
+      - /data/chainlink_ropsten:/chainlink
+    env_file: ./.env.ropsten
+#    # in order for this to work we need to install curl into this container
+    healthcheck:
+      test: curl -sS http://PRIVATE_IP_ROPSTEN:3388 || exit 1
+      # kovan is on geth-mainnet
+  chainlink_kovan:
+    # image: smartcontract/chainlink
+    build: .
+    restart: always
+    command: "local n -p /chainlink/.password -a /chainlink/.api"
+#    environment:
+#      VIRTUAL_HOST: example.com
+#      LETSENCRYPT_HOST: example.com
+    ports:
+      - PRIVATE_IP_KOVAN:4288:6688
+    volumes:
+      - /data/chainlink_kovan:/chainlink
+    env_file: ./.env.kovan
+#    # in order for this to work we need to install curl into this container
+    healthcheck:
+      test: curl -sS http://PRIVATE_IP_KOVAN:4288 || exit 1

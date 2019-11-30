@@ -1,0 +1,9 @@
+version: "2.2"
+
+services:
+#  # If digitalocean agent is not already installed on the host machine, use this container
+  digitalocean-agent:
+    image: digitalocean/do-agent:stable
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro

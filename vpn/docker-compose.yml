@@ -1,0 +1,18 @@
+version: '2'
+
+# before first run:
+# docker-compose run --rm openvpn ovpn_genconfig -u udp://vpn.stormdapps.com
+# docker-compose run --rm openvpn ovpn_initpki
+# docker-compose run --rm openvpn easyrsa build-client-full rstorm nopass
+# docker-compose run --rm openvpn ovpn_getclient rstorm > monitoringrstorm.ovpn
+# more info: https://github.com/kylemanna/docker-openvpn/blob/master/docs/docker-compose.md
+
+services:
+  openvpn:
+    image: kylemanna/openvpn
+    volumes:
+      - /data/vpn:/etc/openvpn
+    ports:
+      - 1194:1194/udp
+    cap_add:
+      - NET_ADMIN
